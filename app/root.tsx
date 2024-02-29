@@ -1,16 +1,16 @@
 import {
   Form,
-  Link,
   Links,
   LiveReload,
   Meta,
+  NavLink,
   Outlet,
   Scripts,
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
 
-import { LinksFunction, json } from "@remix-run/node";
+import { LinksFunction, json, redirect } from "@remix-run/node";
 
 import { createEmptyContact, getContacts } from "./data";
 
@@ -27,7 +27,7 @@ export const loader = async () => {
 
 export const action = async () => {
   const contact = await createEmptyContact();
-  return json({ contact });
+  return redirect(`/contacts/${contact.id}/edit`);
 };
 
 export default function App() {
@@ -64,7 +64,16 @@ export default function App() {
                 <ul>
                   {contacts.map((contact) => (
                     <li key={contact.id}>
-                      <Link to={`contacts/${contact.id}`}>
+                      <NavLink
+                        className={({ isActive, isPending }) =>
+                          isActive
+                            ? "active"
+                            : isPending
+                            ? "pending"
+                            : ""
+                        }
+                        to={`contacts/${contact.id}`}
+                      >
                         {contact.first || contact.last ? (
                           <>
                             {contact.first} {contact.last}
@@ -75,7 +84,7 @@ export default function App() {
                         {contact.favorite ? (
                           <span>★</span>
                         ) : null}
-                      </Link>
+                      </NavLink>
                     </li>
                   ))}
                 </ul>
