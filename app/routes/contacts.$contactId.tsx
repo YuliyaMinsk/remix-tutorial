@@ -1,16 +1,16 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
-import type { FunctionComponent } from "react";
-import invariant from "tiny-invariant";
+import { LoaderFunctionArgs, json } from '@remix-run/node';
+import { Form, useLoaderData } from '@remix-run/react';
+import type { FunctionComponent } from 'react';
+import invariant from 'tiny-invariant';
 
-import { getContact, type ContactRecord } from "../data";
+import { getContact, type ContactRecord } from '../data';
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-  invariant(params.contactId, "Missing contactId param");
+  invariant(params.contactId, 'Missing contactId param');
   const contact = await getContact(params.contactId);
 
   if (!contact) {
-    throw new Response("Not Found", { status: 404 });
+    throw new Response('Not Found', { status: 404 });
   }
 
   return json({ contact });
@@ -22,11 +22,7 @@ export default function Contact() {
   return (
     <div id="contact">
       <div>
-        <img
-          alt={`${contact.first} ${contact.last} avatar`}
-          key={contact.avatar}
-          src={contact.avatar}
-        />
+        <img alt={`${contact.first} ${contact.last} avatar`} key={contact.avatar} src={contact.avatar} />
       </div>
 
       <div>
@@ -37,17 +33,13 @@ export default function Contact() {
             </>
           ) : (
             <i>No Name</i>
-          )}{" "}
+          )}{' '}
           <Favorite contact={contact} />
         </h1>
 
         {contact.twitter ? (
           <p>
-            <a
-              href={`https://twitter.com/${contact.twitter}`}
-            >
-              {contact.twitter}
-            </a>
+            <a href={`https://twitter.com/${contact.twitter}`}>{contact.twitter}</a>
           </p>
         ) : null}
 
@@ -62,9 +54,7 @@ export default function Contact() {
             action="destroy"
             method="post"
             onSubmit={(event) => {
-              const response = confirm(
-                "Please confirm you want to delete this record."
-              );
+              const response = confirm('Please confirm you want to delete this record.');
               if (!response) {
                 event.preventDefault();
               }
@@ -79,22 +69,18 @@ export default function Contact() {
 }
 
 const Favorite: FunctionComponent<{
-  contact: Pick<ContactRecord, "favorite">;
+  contact: Pick<ContactRecord, 'favorite'>;
 }> = ({ contact }) => {
   const favorite = contact.favorite;
 
   return (
     <Form method="post">
       <button
-        aria-label={
-          favorite
-            ? "Remove from favorites"
-            : "Add to favorites"
-        }
+        aria-label={favorite ? 'Remove from favorites' : 'Add to favorites'}
         name="favorite"
-        value={favorite ? "false" : "true"}
+        value={favorite ? 'false' : 'true'}
       >
-        {favorite ? "★" : "☆"}
+        {favorite ? '★' : '☆'}
       </button>
     </Form>
   );

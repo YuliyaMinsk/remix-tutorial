@@ -8,17 +8,16 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
-} from "@remix-run/react";
+  useNavigation,
+} from '@remix-run/react';
 
-import { LinksFunction, json, redirect } from "@remix-run/node";
+import { LinksFunction, json, redirect } from '@remix-run/node';
 
-import { createEmptyContact, getContacts } from "./data";
+import { createEmptyContact, getContacts } from './data';
 
-import appStylesHref from "./app.css";
+import appStylesHref from './app.css';
 
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: appStylesHref },
-];
+export const links: LinksFunction = () => [{ rel: 'stylesheet', href: appStylesHref }];
 
 export const loader = async () => {
   const contacts = await getContacts();
@@ -32,7 +31,8 @@ export const action = async () => {
 
 export default function App() {
   const { contacts } = useLoaderData<typeof loader>();
-  
+  const navigation = useNavigation();
+
   return (
     <html lang="en">
       <head>
@@ -46,13 +46,7 @@ export default function App() {
           <h1>Remix Contacts</h1>
           <div>
             <Form id="search-form" role="search">
-              <input
-                id="q"
-                aria-label="Search contacts"
-                placeholder="Search"
-                type="search"
-                name="q"
-              />
+              <input id="q" aria-label="Search contacts" placeholder="Search" type="search" name="q" />
               <div id="search-spinner" aria-hidden hidden={true} />
             </Form>
             <Form method="post">
@@ -61,41 +55,33 @@ export default function App() {
           </div>
           <nav>
             {contacts.length ? (
-                <ul>
-                  {contacts.map((contact) => (
-                    <li key={contact.id}>
-                      <NavLink
-                        className={({ isActive, isPending }) =>
-                          isActive
-                            ? "active"
-                            : isPending
-                            ? "pending"
-                            : ""
-                        }
-                        to={`contacts/${contact.id}`}
-                      >
-                        {contact.first || contact.last ? (
-                          <>
-                            {contact.first} {contact.last}
-                          </>
-                        ) : (
-                          <i>No Name</i>
-                        )}{" "}
-                        {contact.favorite ? (
-                          <span>★</span>
-                        ) : null}
-                      </NavLink>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p>
-                  <i>No contacts</i>
-                </p>
-              )}
+              <ul>
+                {contacts.map((contact) => (
+                  <li key={contact.id}>
+                    <NavLink
+                      className={({ isActive, isPending }) => (isActive ? 'active' : isPending ? 'pending' : '')}
+                      to={`contacts/${contact.id}`}
+                    >
+                      {contact.first || contact.last ? (
+                        <>
+                          {contact.first} {contact.last}
+                        </>
+                      ) : (
+                        <i>No Name</i>
+                      )}{' '}
+                      {contact.favorite ? <span>★</span> : null}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>
+                <i>No contacts</i>
+              </p>
+            )}
           </nav>
         </div>
-        <div id="detail">
+        <div className={navigation.state === 'loading' ? 'loading' : ''} id="detail">
           <Outlet />
         </div>
 
